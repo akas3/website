@@ -22,8 +22,7 @@ public class JewelryItem {
   @NotBlank(message = "Price is required")
   private String price;
 
-  @NotBlank(message = "Image URL is required")
-  private String imageUrl;
+  private String imageUrl; // Made optional here to handle file processing manually
 
   @NotBlank(message = "Description is required")
   private String description;

@@ -6,10 +6,7 @@
     <title>Admin | Daily Fancy Jewels</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/styles.css}" />
   </head>
   <body>
@@ -36,7 +33,7 @@
           </form>
         </div>
 
-        <form class="admin-form" th:action="@{/admin/items}" th:object="${item}" method="post">
+        <form class="admin-form" th:action="@{/admin/items}" th:object="${item}" method="post" enctype="multipart/form-data">
           <input type="hidden" th:field="*{id}" />
           <label>
             Product name
@@ -54,12 +51,12 @@
             <input th:field="*{price}" type="text" placeholder="₹149" required />
           </label>
           <label>
-            Image URL
-            <input th:field="*{imageUrl}" type="url" placeholder="https://images.unsplash.com/..." required />
+            Upload Product Image
+            <input type="file" name="imageFile" accept="image/*" th:required="${item.id == null}" />
           </label>
           <label class="wide">
             Description
-            <textarea th:field="*{description}" rows="3" placeholder="Fancy daily wear item, not real gold or diamond" required></textarea>
+            <textarea th:field="*{description}" rows="3" placeholder="Fancy daily wear item..." required></textarea>
           </label>
           <div class="form-actions wide">
             <button class="button primary" type="submit" th:text="*{id} == null ? 'Save Item' : 'Update Item'"></button>
