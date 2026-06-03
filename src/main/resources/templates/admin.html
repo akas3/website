@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Daily Fancy Jewels</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" th:href="@{/}">
+        <span class="brand-mark">D</span>
+        <span>Daily Fancy Jewels</span>
+      </a>
+      <nav class="main-nav" aria-label="Admin navigation">
+        <a th:href="@{/}">Storefront</a>
+        <a class="admin-link" th:href="@{/admin}">Admin Portal</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="admin-page">
+        <div class="admin-heading">
+          <div>
+            <p class="eyebrow">Private Tools</p>
+            <h1>Admin Inventory</h1>
+          </div>
+          <form th:action="@{/admin/reset}" method="post">
+            <button class="button secondary" type="submit">Reset Demo Items</button>
+          </form>
+        </div>
+
+        <form class="admin-form" th:action="@{/admin/items}" th:object="${item}" method="post">
+          <input type="hidden" th:field="*{id}" />
+          <label>
+            Product name
+            <input th:field="*{name}" type="text" placeholder="Daily Wear Hoop Earrings" required />
+            <span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+          </label>
+          <label>
+            Category
+            <select th:field="*{category}" required>
+              <option th:each="category : ${categories}" th:value="${category}" th:text="${category}"></option>
+            </select>
+          </label>
+          <label>
+            Price
+            <input th:field="*{price}" type="text" placeholder="₹149" required />
+          </label>
+          <label>
+            Image URL
+            <input th:field="*{imageUrl}" type="url" placeholder="https://images.unsplash.com/..." required />
+          </label>
+          <label class="wide">
+            Description
+            <textarea th:field="*{description}" rows="3" placeholder="Fancy daily wear item, not real gold or diamond" required></textarea>
+          </label>
+          <div class="form-actions wide">
+            <button class="button primary" type="submit" th:text="*{id} == null ? 'Save Item' : 'Update Item'"></button>
+            <a class="button secondary" th:href="@{/admin}">Clear</a>
+          </div>
+        </form>
+
+        <div class="admin-list">
+          <article class="admin-row" th:each="product : ${items}">
+            <img th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy" />
+            <div>
+              <strong th:text="${product.name}"></strong>
+              <p>
+                <span th:text="${product.category}"></span>
+                <span> · </span>
+                <span th:text="${product.price}"></span>
+              </p>
+            </div>
+            <div class="row-actions">
+              <a class="icon-button" th:href="@{/admin/edit/{id}(id=${product.id})}">Edit</a>
+              <form th:action="@{/admin/delete/{id}(id=${product.id})}" method="post">
+                <button class="icon-button delete" type="submit">Remove</button>
+              </form>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

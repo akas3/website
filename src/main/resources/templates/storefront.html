@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Fancy Jewels</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" th:href="@{/}" aria-label="Daily Fancy Jewels home">
+        <span class="brand-mark">D</span>
+        <span>Daily Fancy Jewels</span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#collections">Collections</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <img th:src="@{/assets/fancy-jewelry-hero.png}" alt="Daily-wear fancy jewelry and accessories arranged on a light background" />
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="eyebrow">Fancy Daily Wear Jewelry</p>
+          <h1>Daily Fancy Jewels</h1>
+          <p>
+            Simple earrings, bangles, chains, rings, hair clips, and rolled-gold style fashion items for everyday use.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#collections">Shop Collection</a>
+            <a class="button secondary" href="#contact">Contact Us</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section intro" id="about">
+        <div>
+          <p class="eyebrow">Simple And Affordable</p>
+          <h2>Fancy items for daily use</h2>
+        </div>
+        <p>
+          This shop is for fashion and imitation jewelry, including rolled-gold style items. We do not sell real gold,
+          diamonds, or precious stones. Your team can manage every item from the Java admin page.
+        </p>
+      </section>
+
+      <section class="section toolbar" aria-label="Collection filters">
+        <div>
+          <p class="eyebrow">Collections</p>
+          <h2 id="collections">Shop Items</h2>
+        </div>
+        <div class="filters" role="list" aria-label="Filter products">
+          <a
+            th:each="category : ${categories}"
+            class="filter-button"
+            th:classappend="${category == activeCategory} ? ' active'"
+            th:href="@{/(category=${category})}"
+            th:text="${category}"
+          ></a>
+        </div>
+      </section>
+
+      <section class="product-grid" aria-live="polite">
+        <p class="empty-state" th:if="${#lists.isEmpty(items)}">No jewelry items in this collection yet.</p>
+        <article class="product-card" th:each="item : ${items}">
+          <img class="product-image" th:src="${item.imageUrl}" th:alt="${item.name}" loading="lazy" />
+          <div class="product-body">
+            <div class="product-meta">
+              <span th:text="${item.category}"></span>
+              <span th:text="${item.price}"></span>
+            </div>
+            <h3 th:text="${item.name}"></h3>
+            <p th:text="${item.description}"></p>
+            <a class="enquire" href="#contact">Enquire Now</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="section service-band">
+        <article>
+          <span>01</span>
+          <h3>Clear Product Details</h3>
+          <p>Show price, item type, color, size, and care details so customers can choose quickly.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Easy Enquiries</h3>
+          <p>Customers can ask about stock, colors, combos, and delivery before ordering.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Easy Inventory</h3>
+          <p>Add new fancy items and remove out-of-stock products from the admin page in seconds.</p>
+        </article>
+      </section>
+
+      <section class="contact-section" id="contact">
+        <div>
+          <p class="eyebrow">Visit The Boutique</p>
+          <h2>Ready for customer enquiries</h2>
+          <p>Add your real phone number, WhatsApp, address, delivery area, and business hours here.</p>
+        </div>
+        <div class="contact-card">
+          <a href="tel:+10000000000">+1 000 000 0000</a>
+          <a href="mailto:hello@dailyfancyjewels.com">hello@dailyfancyjewels.com</a>
+          <span>Open daily, 10:00 AM - 8:00 PM</span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>© 2026 Daily Fancy Jewels</span>
+      <span>Fancy, imitation, and rolled-gold style daily wear items</span>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+com/aurelia/jewelrystore/model/JewelryItem.class
+com/aurelia/jewelrystore/controller/StorefrontController.class
+com/aurelia/jewelrystore/controller/AdminController.class
+com/aurelia/jewelrystore/JewelryStoreApplication.class
+com/aurelia/jewelrystore/service/JewelryInventoryService.class
+com/aurelia/jewelrystore/config/DemoDataLoader.class
+com/aurelia/jewelrystore/repository/JewelryItemRepository.class
