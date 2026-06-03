@@ -1,19 +1,28 @@
 package com.aurelia.jewelrystore.controller;
 
-import com.aurelia.jewelrystore.model.JewelryItem;
-import com.aurelia.jewelrystore.repository.JewelryItemRepository;
-import com.aurelia.jewelrystore.service.JewelryInventoryService;
-import jakarta.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.aurelia.jewelrystore.model.JewelryItem;
+import com.aurelia.jewelrystore.repository.JewelryItemRepository;
+import com.aurelia.jewelrystore.service.JewelryInventoryService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin")
@@ -37,42 +46,29 @@ public class AdminInventoryController {
     }
 
     @PostMapping("/items")
-    public String saveItem(@Valid @ModelAttribute("item") JewelryItem item,
-                           BindingResult result,
-                           @RequestParam("imageFile") MultipartFile imageFile,
-                           Model model) {
-        
+    public String saveItem(@Valid @ModelAttribute("item") JewelryItem item, BindingResult result,
+                           @RequestParam("imageFile") MultipartFile imageFile, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("items", repository.findAll());
             model.addAttribute("categories", inventoryService.categories());
             return "admin";
         }
 
-        // Handle File Processing Logic
         if (!imageFile.isEmpty()) {
             try {
                 Path uploadPath = Paths.get(UPLOAD_DIR);
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
-
-                // Generate a unique file name to avoid collisions
                 String uniqueFileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
                 Path filePath = uploadPath.resolve(uniqueFileName);
-                Files.copy(imageFile.getInputStream(), filePath);
-
-                // Save accessible public web directory URL path to database entry
+                Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
                 item.setImageUrl("/uploads/" + uniqueFileName);
             } catch (IOException e) {
                 e.printStackTrace();
-                // Optional: handle visual fallback notifications here
             }
         } else if (item.getId() != null) {
-            // Keep existing image if updating an item without selecting a new file
-            JewelryItem existing = repository.findById(item.getId()).orElse(null);
-            if (existing != null) {
-                item.setImageUrl(existing.getImageUrl());
-            }
+            repository.findById(item.getId()).ifPresent(old -> item.setImageUrl(old.getImageUrl()));
         }
 
         repository.save(item);
@@ -81,8 +77,7 @@ public class AdminInventoryController {
 
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model) {
-        JewelryItem item = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
-        model.addAttribute("item", item);
+        model.addAttribute("item", repository.findById(id).orElseThrow());
         model.addAttribute("items", repository.findAll());
         model.addAttribute("categories", inventoryService.categories());
         return "admin";
@@ -91,12 +86,6 @@ public class AdminInventoryController {
     @PostMapping("/delete/{id}")
     public String deleteItem(@PathVariable Long id) {
         repository.deleteById(id);
-        return "redirect:/admin";
-    }
-    
-    @PostMapping("/reset")
-    public String resetDemo() {
-        // Implementation fallback if running reset profiles
         return "redirect:/admin";
     }
 }
